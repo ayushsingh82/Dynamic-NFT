@@ -1,6 +1,7 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useRef } from 'react'
 import { motion } from 'framer-motion'
+import Navbar from './Navbar'
 
 function Home() {
   const aboutRef = useRef(null)
@@ -32,25 +33,7 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <header className="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-gray-800">
-        <div className="container mx-auto flex justify-between items-center p-4">
-          <div className="flex items-center gap-8">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-              NFT Staking
-            </h1>
-            <nav className="hidden md:flex gap-6">
-              <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} 
-                className="hover:text-purple-500 transition-colors">Home</button>
-              <button onClick={scrollToAbout} 
-                className="hover:text-purple-500 transition-colors">About</button>
-              <a href="#featured" className="hover:text-purple-500 transition-colors">Featured</a>
-              <a href="/staking" className="hover:text-purple-500 transition-colors">Staking</a>
-            </nav>
-          </div>
-          <ConnectButton />
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero Section with 3D NFT */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">

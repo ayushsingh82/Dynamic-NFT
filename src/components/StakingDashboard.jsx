@@ -2,11 +2,12 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useAccount, useContractRead } from 'wagmi'
 import NFTCard from './NFTCard'
 import { useState, useEffect, useRef } from 'react'
+import Navbar from './Navbar'
+import { useStaking } from '../hooks/useStaking'
 
 function StakingDashboard() {
   const { address, isConnected } = useAccount()
-  const [availableNFTs, setAvailableNFTs] = useState([])
-  const [stakedNFTs, setStakedNFTs] = useState([])
+  const { stakedNFTs, rewards, stakeNFT, unstakeNFT, claimRewards } = useStaking()
   const aboutRef = useRef(null)
 
   const scrollToAbout = () => {
@@ -20,26 +21,33 @@ function StakingDashboard() {
     { id: 3, name: 'Cyber Ape #3', image: 'https://i.seadn.io/gcs/files/c49d2493f2ef4a40a5306fdf1f5c6b43.png' },
   ]
 
+  const handleStake = async (tokenId) => {
+    try {
+      await stakeNFT({ args: [tokenId] })
+    } catch (error) {
+      console.error('Error staking NFT:', error)
+    }
+  }
+
+  const handleUnstake = async (tokenId) => {
+    try {
+      await unstakeNFT({ args: [tokenId] })
+    } catch (error) {
+      console.error('Error unstaking NFT:', error)
+    }
+  }
+
+  const handleClaim = async (tokenId) => {
+    try {
+      await claimRewards({ args: [tokenId] })
+    } catch (error) {
+      console.error('Error claiming rewards:', error)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <header className="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-gray-800">
-        <div className="container mx-auto flex justify-between items-center p-4">
-          <div className="flex items-center gap-8">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-              NFT Staking
-            </h1>
-            <nav className="hidden md:flex gap-6">
-              <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} 
-                className="hover:text-purple-500 transition-colors">Home</button>
-              <button onClick={scrollToAbout} 
-                className="hover:text-purple-500 transition-colors">About</button>
-              <a href="#featured" className="hover:text-purple-500 transition-colors">Featured</a>
-            </nav>
-          </div>
-          <ConnectButton />
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center">
@@ -164,12 +172,12 @@ function StakingDashboard() {
                   Available to Stake
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {availableNFTs.map((nft) => (
+                  {sampleNFTs.map((nft) => (
                     <NFTCard
-                      key={nft.tokenId}
+                      key={nft.id}
                       nft={nft}
                       action="stake"
-                      onAction={() => handleStake(nft.tokenId)}
+                      onAction={() => handleStake(nft.id)}
                     />
                   ))}
                 </div>

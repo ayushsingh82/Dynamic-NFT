@@ -8,7 +8,10 @@ import {
 } from '@rainbow-me/rainbowkit/wallets'
 import { createPublicClient, http } from 'viem'
 import '@rainbow-me/rainbowkit/styles.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Home from './components/Home'
+import StakingDashboard from './components/StakingDashboard'
+import Rewards from './components/Rewards'
 
 const projectId = 'e7fa7d19fd057ecd9403a0e89bd62b8b'
 
@@ -56,7 +59,13 @@ function App() {
   return (
     <WagmiConfig config={config}>
       <RainbowKitProvider chains={[openCampusCodex]}>
-        <Home />
+        <Router>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/staking" element={<StakingDashboard />} />
+            <Route path="/rewards" element={<Rewards />} />
+          </Routes>
+        </Router>
       </RainbowKitProvider>
     </WagmiConfig>
   )
