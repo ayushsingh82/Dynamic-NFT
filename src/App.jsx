@@ -8,7 +8,7 @@ import {
 } from '@rainbow-me/rainbowkit/wallets'
 import { createPublicClient, http } from 'viem'
 import '@rainbow-me/rainbowkit/styles.css'
-import StakingDashboard from './components/StakingDashboard'
+import Home from './components/Home'
 
 const projectId = 'e7fa7d19fd057ecd9403a0e89bd62b8b'
 
@@ -56,7 +56,7 @@ function App() {
   return (
     <WagmiConfig config={config}>
       <RainbowKitProvider chains={[openCampusCodex]}>
-        <StakingDashboard />
+        <Home />
       </RainbowKitProvider>
     </WagmiConfig>
   )
