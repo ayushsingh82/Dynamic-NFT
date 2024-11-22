@@ -1,6 +1,5 @@
 import { useContractRead, useContractWrite, useAccount } from 'wagmi'
-import { NFTStakingABI } from '../contracts/abis/NFTStakingABI'
-import { EDUTokenABI } from '../contracts/abis/EDUTokenABI'
+import { NFTStakingABI, EDUTokenABI } from '../contracts/abis'
 import { useState, useEffect } from 'react'
 
 const NFT_STAKING_ADDRESS = 'YOUR_STAKING_CONTRACT_ADDRESS'

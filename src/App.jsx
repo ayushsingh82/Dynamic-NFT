@@ -12,6 +12,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Home from './components/Home'
 import StakingDashboard from './components/StakingDashboard'
 import Rewards from './components/Rewards'
+import EditNFT from './components/EditNFT'
+import Mint from './components/Mint'
+import MyNFTs from './components/MyNFTs'
 
 const projectId = 'e7fa7d19fd057ecd9403a0e89bd62b8b'
 
@@ -62,8 +65,9 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/staking" element={<StakingDashboard />} />
-            <Route path="/rewards" element={<Rewards />} />
+            <Route path="/edit-nft" element={<EditNFT />} />
+            <Route path="/mint" element={<Mint />} />
+            <Route path="/my-nfts" element={<MyNFTs />} />
           </Routes>
         </Router>
       </RainbowKitProvider>

@@ -9,7 +9,7 @@ function Navbar() {
       <div className="container mx-auto flex justify-between items-center p-4">
         <div className="flex items-center gap-8">
           <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-            NFT Staking
+            NFT Studio
           </Link>
           <nav className="hidden md:flex gap-6">
             <Link 
@@ -19,16 +19,22 @@ function Navbar() {
               Home
             </Link>
             <Link 
-              to="/staking" 
-              className={`transition-colors ${location.pathname === '/staking' ? 'text-purple-500' : 'text-white hover:text-purple-500'}`}
+              to="/edit-nft" 
+              className={`transition-colors ${location.pathname === '/edit-nft' ? 'text-purple-500' : 'text-white hover:text-purple-500'}`}
             >
-              Staking
+              Edit NFT
             </Link>
             <Link 
-              to="/rewards" 
-              className={`transition-colors ${location.pathname === '/rewards' ? 'text-purple-500' : 'text-white hover:text-purple-500'}`}
+              to="/mint" 
+              className={`transition-colors ${location.pathname === '/mint' ? 'text-purple-500' : 'text-white hover:text-purple-500'}`}
             >
-              Rewards
+              Mint
+            </Link>
+            <Link 
+              to="/my-nfts" 
+              className={`transition-colors ${location.pathname === '/my-nfts' ? 'text-purple-500' : 'text-white hover:text-purple-500'}`}
+            >
+              My NFTs
             </Link>
           </nav>
         </div>
