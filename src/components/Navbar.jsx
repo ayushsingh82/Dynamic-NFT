@@ -36,6 +36,12 @@ function Navbar() {
             >
               My NFTs
             </Link>
+            <a 
+              href="#about" 
+              className="text-white hover:text-purple-500 transition-colors"
+            >
+              About
+            </a>
           </nav>
         </div>
         <ConnectButton />

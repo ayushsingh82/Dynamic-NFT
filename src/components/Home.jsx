@@ -1,110 +1,297 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { useRef } from 'react'
-import { motion } from 'framer-motion'
+import { useRef, useEffect } from 'react'
+import { motion, useAnimation, useScroll, useTransform } from 'framer-motion'
 import Navbar from './Navbar'
+import { Link } from 'react-router-dom'
 
 function Home() {
-  const aboutRef = useRef(null)
+  const targetRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ["start start", "end start"]
+  })
 
-  const scrollToAbout = () => {
-    aboutRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "100%"])
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
 
-  const featuredNFTs = [
+  const floatingNFTs = [
     {
       id: 1,
-      name: 'Cyber Kong #1',
       image: 'https://i.seadn.io/gcs/files/c49d2493f2ef4a40a5306fdf1f5c6b43.png',
-      price: '2.5 ETH'
+      name: 'Cyber Ape',
+      animation: {
+        y: [-20, 20],
+        rotateZ: [-5, 5],
+        rotateY: [-15, 15],
+        scale: [1, 1.05],
+        transition: {
+          duration: 4,
+          repeat: Infinity,
+          repeatType: 'reverse',
+          ease: 'easeInOut'
+        }
+      }
     },
     {
       id: 2,
-      name: 'Bored Ape #2087',
       image: 'https://i.seadn.io/gae/H8jOCJuQokNqGBpkBN5wk1oZwO7LM8bNnrHCaekV2nKjnCqw6UB5oaH8XyNeBDj6bA_n1mjejzhFQUP3O1NfjFLHr3FOaeHcTOOT?auto=format&dpr=1&w=1000',
-      price: '3.2 ETH'
+      name: 'Bored Ape',
+      animation: {
+        y: [20, -20],
+        rotateZ: [5, -5],
+        rotateY: [15, -15],
+        scale: [1.05, 1],
+        transition: {
+          duration: 5,
+          repeat: Infinity,
+          repeatType: 'reverse',
+          ease: 'easeInOut'
+        }
+      }
     },
     {
       id: 3,
-      name: 'Doodle #8697',
       image: 'https://i.seadn.io/gae/7B0qai02OdHA8P_EOVK672qUliyjQdQDGNrACxs7WnTgZAkJa_wWURnIFKeOh5VTf8cfTqW3wQpozGedaC9mteKphEOtztls02RlWQ?auto=format&dpr=1&w=1000',
-      price: '1.8 ETH'
+      name: 'Doodle',
+      animation: {
+        y: [-15, 15],
+        rotateZ: [-3, 3],
+        rotateY: [-10, 10],
+        scale: [1, 1.03],
+        transition: {
+          duration: 4.5,
+          repeat: Infinity,
+          repeatType: 'reverse',
+          ease: 'easeInOut'
+        }
+      }
     }
   ]
 
+  // Animated particles
+  const particles = Array.from({ length: 50 }).map((_, i) => ({
+    id: i,
+    size: Math.random() * 4 + 1,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    duration: Math.random() * 20 + 10,
+    delay: Math.random() * 5
+  }))
+
+  const features = [
+    {
+      title: "AI-Powered Editing",
+      description: "Transform your images with advanced AI filters and enhancements",
+      icon: "✨",
+      gradient: "from-blue-500 to-purple-500"
+    },
+    {
+      title: "Smart Filters",
+      description: "Apply professional-grade filters with one click",
+      icon: "🎨",
+      gradient: "from-purple-500 to-pink-500"
+    },
+    {
+      title: "Quick Minting",
+      description: "Mint your NFTs instantly with minimal gas fees",
+      icon: "⚡",
+      gradient: "from-pink-500 to-red-500"
+    }
+  ]
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.3,
+        staggerChildren: 0.2
+      }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white overflow-hidden" ref={targetRef}>
       <Navbar />
 
-      {/* Hero Section with 3D NFT */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 to-black z-0"></div>
-        <div className="container mx-auto px-4 z-10 flex flex-col md:flex-row items-center justify-between">
-          <div className="text-left md:w-1/2 mb-12 md:mb-0">
-            <h2 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-              Stake NFTs,<br />Earn Rewards
-            </h2>
-            <p className="text-xl md:text-2xl text-gray-300 mb-8">
-              Join the future of digital asset yield generation with our innovative NFT staking platform.
-            </p>
-            <a 
-              href="/staking"
-              className="bg-gradient-to-r from-purple-500 to-pink-500 px-8 py-4 rounded-lg text-lg font-bold hover:opacity-90 transition-opacity inline-block"
-            >
-              Start Staking
-            </a>
-          </div>
-          <motion.div 
-            className="md:w-1/2 relative"
-            animate={{ 
-              rotateY: [0, 10, 0],
-              rotateX: [0, -10, 0]
+      {/* Animated Background */}
+      <div className="fixed inset-0 overflow-hidden">
+        {particles.map((particle) => (
+          <motion.div
+            key={particle.id}
+            className="absolute rounded-full bg-white"
+            style={{
+              width: particle.size,
+              height: particle.size,
+              left: `${particle.x}%`,
+              top: `${particle.y}%`,
+              opacity: 0.2
             }}
-            transition={{ 
-              duration: 6,
+            animate={{
+              y: [0, -100],
+              opacity: [0, 0.5, 0],
+            }}
+            transition={{
+              duration: particle.duration,
               repeat: Infinity,
-              ease: "easeInOut"
+              delay: particle.delay,
+              ease: "linear"
             }}
-          >
-            <img 
-              src="https://i.seadn.io/gcs/files/c49d2493f2ef4a40a5306fdf1f5c6b43.png"
-              alt="Featured NFT"
-              className="w-[500px] h-[500px] object-cover rounded-2xl shadow-2xl shadow-purple-500/20"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-purple-500/20 to-transparent rounded-2xl"></div>
-          </motion.div>
-        </div>
-      </section>
+          />
+        ))}
+      </div>
 
-      {/* Featured NFTs Section */}
-      <section id="featured" className="py-20 bg-black/90">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold mb-12 text-center bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-            Featured Collections
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredNFTs.map((nft) => (
-              <motion.div
-                key={nft.id}
-                className="group relative overflow-hidden rounded-2xl cursor-pointer"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                drag
-                dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                dragElastic={0.1}
-              >
-                <img 
-                  src={nft.image} 
+      {/* Hero Section */}
+      <motion.section 
+        style={{ y, opacity }}
+        className="relative min-h-screen flex items-center justify-center pt-20"
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 via-black to-black z-0"></div>
+        
+        {/* Floating NFTs */}
+        <div className="absolute inset-0 overflow-hidden perspective-1000">
+          {floatingNFTs.map((nft, index) => (
+            <motion.div
+              key={nft.id}
+              className="absolute hidden md:block"
+              style={{
+                left: `${25 + index * 25}%`,
+                top: '20%',
+                transformStyle: 'preserve-3d'
+              }}
+              animate={nft.animation}
+              whileHover={{ 
+                scale: 1.1,
+                rotateY: 180,
+                transition: { duration: 0.8 }
+              }}
+            >
+              <div className="relative group cursor-pointer">
+                <motion.img
+                  src={nft.image}
                   alt={nft.name}
-                  className="w-full h-[400px] object-cover"
+                  className="w-48 h-48 rounded-2xl shadow-2xl shadow-purple-500/20 object-cover 
+                           group-hover:shadow-purple-500/40 transition-shadow"
+                  style={{ backfaceVisibility: 'hidden' }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h3 className="text-2xl font-bold mb-2">{nft.name}</h3>
-                    <p className="text-purple-400">{nft.price}</p>
-                    <button className="mt-4 bg-purple-500/80 hover:bg-purple-600/80 px-4 py-2 rounded-lg transition-colors">
-                      View Details
-                    </button>
+                <motion.div
+                  className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-600/90 to-pink-600/90
+                           backdrop-blur-sm flex items-center justify-center"
+                  initial={{ opacity: 0, rotateY: 180 }}
+                  whileHover={{ opacity: 1 }}
+                  style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+                >
+                  <div className="text-center p-4">
+                    <h3 className="text-xl font-bold mb-2">{nft.name}</h3>
+                    <p className="text-sm text-white/80">Click to Edit</p>
                   </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Hero Content */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="container mx-auto px-4 z-10 text-center"
+        >
+          <motion.h1 
+            variants={itemVariants}
+            className="text-6xl md:text-8xl font-bold mb-6"
+          >
+            <span className="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent
+                         animate-gradient-x inline-block mt-[180px]">
+              Create Stunning NFTs
+            </span>
+            <br />
+            <motion.span
+              animate={{
+                scale: [1, 1.02, 1],
+                opacity: [0.8, 1, 0.8],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                repeatType: 'reverse',
+              }}
+              className="bg-gradient-to-r from-red-500 via-pink-500 to-purple-500 bg-clip-text text-transparent"
+            >
+              in Minutes
+            </motion.span>
+          </motion.h1>
+
+          <motion.p 
+            variants={itemVariants}
+            className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto"
+          >
+            Transform your art into unique NFTs with our powerful AI-powered editing tools.
+            <br />
+            <span className="text-purple-400">No design experience needed.</span>
+          </motion.p>
+
+          <motion.div 
+            variants={itemVariants}
+            className="flex gap-6 justify-center"
+          >
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+           
+            </motion.div>
+
+           
+          </motion.div>
+        </motion.div>
+      </motion.section>
+
+   
+
+      {/* Features Section */}
+      <section className="py-32 relative z-10">
+        <div className="container mx-auto px-4">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-5xl font-bold text-center mb-20 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent"
+          >
+            Create Like Never Before
+          </motion.h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+                whileHover={{ 
+                  scale: 1.05,
+                  rotateY: 10,
+                  transition: { duration: 0.3 }
+                }}
+                className="relative group transform perspective-1000"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
+                <div className="relative p-8 bg-black/50 backdrop-blur-sm rounded-2xl border border-purple-500/20 hover:border-purple-500/40 transition-all h-full">
+                  <div className={`text-6xl mb-6 bg-gradient-to-r ${feature.gradient} bg-clip-text text-transparent transform group-hover:scale-110 transition-transform`}>
+                    {feature.icon}
+                  </div>
+                  <h3 className={`text-2xl font-bold mb-4 bg-gradient-to-r ${feature.gradient} bg-clip-text text-transparent`}>
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-400 text-lg leading-relaxed">
+                    {feature.description}
+                  </p>
                 </div>
               </motion.div>
             ))}
@@ -112,130 +299,101 @@ function Home() {
         </div>
       </section>
 
-      {/* Stats Section with Animation */}
-      <section className="py-20 bg-gradient-to-b from-black to-purple-900/20">
+      {/* How It Works Section */}
+      <section className="py-32 relative z-10">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="bg-black/50 backdrop-blur-md rounded-2xl p-8 border border-purple-500/20"
-            >
-              <h3 className="text-4xl font-bold mb-2">100K+</h3>
-              <p className="text-gray-400">Total NFTs Staked</p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-black/50 backdrop-blur-md rounded-2xl p-8 border border-purple-500/20"
-            >
-              <h3 className="text-4xl font-bold mb-2">$5M+</h3>
-              <p className="text-gray-400">Total Rewards Distributed</p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="bg-black/50 backdrop-blur-md rounded-2xl p-8 border border-purple-500/20"
-            >
-              <h3 className="text-4xl font-bold mb-2">50K+</h3>
-              <p className="text-gray-400">Active Stakers</p>
-            </motion.div>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-5xl font-bold text-center mb-20 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent"
+          >
+            How It Works
+          </motion.h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {[
+              {
+                title: "Upload Your Art",
+                description: "Start with any image you want to transform into an NFT",
+                icon: "🎨",
+                step: "1"
+              },
+              {
+                title: "Customize & Edit",
+                description: "Use our AI-powered tools to enhance and customize your NFT",
+                icon: "✨",
+                step: "2"
+              },
+              {
+                title: "Mint & Share",
+                description: "Mint your NFT and share it with the world",
+                icon: "🚀",
+                step: "3"
+              }
+            ].map((item, index) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+                className="relative group"
+              >
+                <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000"></div>
+                <div className="relative bg-black p-8 rounded-2xl">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-2xl">
+                      {item.step}
+                    </div>
+                    <h3 className="text-2xl font-bold">{item.title}</h3>
+                  </div>
+                  <p className="text-gray-400">{item.description}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* About Section */}
-      <section ref={aboutRef} className="py-20 bg-black">
+      {/* Community Section */}
+      <section className="py-32 relative z-10">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold mb-12 text-center bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-              Why Choose Us
-            </h2>
-            <div className="grid md:grid-cols-2 gap-12">
-              <motion.div 
-                className="space-y-6"
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <div className="bg-purple-900/20 p-6 rounded-2xl backdrop-blur-sm">
-                  <h3 className="text-xl font-bold mb-3">High APY Returns</h3>
-                  <p className="text-gray-300">Earn up to 25% APY on your staked NFTs with our innovative reward system.</p>
-                </div>
-                <div className="bg-purple-900/20 p-6 rounded-2xl backdrop-blur-sm">
-                  <h3 className="text-xl font-bold mb-3">Secure Platform</h3>
-                  <p className="text-gray-300">Built on secure smart contracts with regular audits and insurance coverage.</p>
-                </div>
-                <div className="bg-purple-900/20 p-6 rounded-2xl backdrop-blur-sm">
-                  <h3 className="text-xl font-bold mb-3">Community Driven</h3>
-                  <p className="text-gray-300">Join a thriving community of NFT enthusiasts and earn together.</p>
-                </div>
-              </motion.div>
-              <motion.div 
-                className="relative"
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <img 
-                  src="https://i.seadn.io/gae/H8jOCJuQokNqGBpkBN5wk1oZwO7LM8bNnrHCaekV2nKjnCqw6UB5oaH8XyNeBDj6bA_n1mjejzhFQUP3O1NfjFLHr3FOaeHcTOOT?auto=format&dpr=1&w=1000"
-                  alt="About"
-                  className="rounded-2xl shadow-2xl shadow-purple-500/20"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-purple-500/20 to-transparent rounded-2xl"></div>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-black/90 border-t border-purple-500/20 py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-xl font-bold mb-4 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                NFT Staking
-              </h3>
-              <p className="text-gray-400">The future of NFT yield generation.</p>
-            </div>
-            <div>
-              <h4 className="text-lg font-bold mb-4">Quick Links</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-400 hover:text-purple-500 transition-colors">Home</a></li>
-                <li><button onClick={scrollToAbout} className="text-gray-400 hover:text-purple-500 transition-colors">About</button></li>
-                <li><a href="#featured" className="text-gray-400 hover:text-purple-500 transition-colors">Featured</a></li>
-                <li><a href="/staking" className="text-gray-400 hover:text-purple-500 transition-colors">Staking</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-bold mb-4">Community</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-400 hover:text-purple-500 transition-colors">Discord</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-purple-500 transition-colors">Twitter</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-purple-500 transition-colors">Telegram</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-bold mb-4">Newsletter</h4>
-              <p className="text-gray-400 mb-4">Stay updated with our latest news</p>
-              <div className="flex">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="bg-gray-800 rounded-l-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-                <button className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded-r-lg transition-colors">
-                  Subscribe
-                </button>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="relative group max-w-4xl mx-auto"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-300" />
+            <div className="relative bg-black/50 backdrop-blur-sm p-12 rounded-3xl border border-purple-500/20 text-center">
+              <h2 className="text-4xl md:text-5xl font-bold mb-8 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                Join Our Community
+              </h2>
+              <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+                Connect with other creators, share your work, and get inspired.
+              </p>
+              <div className="flex gap-4 justify-center">
+                <motion.a
+                  href="#"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-purple-500/20 hover:bg-purple-500/30 px-6 py-3 rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <span>Discord</span>
+                  <span>→</span>
+                </motion.a>
+                <motion.a
+                  href="#"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-pink-500/20 hover:bg-pink-500/30 px-6 py-3 rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <span>Twitter</span>
+                  <span>→</span>
+                </motion.a>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </footer>
+      </section>
     </div>
   )
 }

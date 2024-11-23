@@ -5,7 +5,6 @@ import { motion } from 'framer-motion'
 
 function EditNFT() {
   const { address, isConnected } = useAccount()
-  const [selectedNFT, setSelectedNFT] = useState(null)
   const [nftData, setNftData] = useState({
     name: '',
     description: '',
@@ -13,7 +12,6 @@ function EditNFT() {
     attributes: []
   })
   const [previewImage, setPreviewImage] = useState(null)
-  const [isEditing, setIsEditing] = useState(false)
   const [selectedFilter, setSelectedFilter] = useState(null)
   const [imageAdjustments, setImageAdjustments] = useState({
     brightness: 100,
@@ -114,8 +112,8 @@ function EditNFT() {
                 className="bg-black/50 backdrop-blur-md rounded-2xl p-6 border border-purple-500/20"
               >
                 <h2 className="text-2xl font-bold mb-6">Preview</h2>
-                <div className="aspect-square rounded-xl overflow-hidden bg-gray-800 mb-4">
-                  {previewImage ? (
+                <div className="relative aspect-square rounded-xl overflow-hidden bg-gray-800 mb-4">
+                  {previewImage && (
                     <img
                       ref={imageRef}
                       src={previewImage}
@@ -123,14 +121,10 @@ function EditNFT() {
                       className="w-full h-full object-cover transition-all duration-300"
                       style={getImageStyle()}
                     />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                      No image selected
-                    </div>
                   )}
                 </div>
                 {previewImage && (
-                  <div className="space-y-4">
+                  <>
                     {/* Color Filters */}
                     <div>
                       <h3 className="text-lg font-semibold mb-2">Color Filters</h3>
@@ -152,7 +146,7 @@ function EditNFT() {
                     </div>
 
                     {/* Image Adjustments */}
-                    <div>
+                    <div className="mt-6">
                       <h3 className="text-lg font-semibold mb-2">Adjustments</h3>
                       <div className="space-y-3">
                         <div>
@@ -201,7 +195,7 @@ function EditNFT() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </>
                 )}
                 <div className="space-y-2 mt-4">
                   <p className="font-bold text-xl">{nftData.name || 'Untitled NFT'}</p>
