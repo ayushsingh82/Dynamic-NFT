@@ -24,24 +24,14 @@ function Navbar() {
             >
               Edit NFT
             </Link>
-            <Link 
-              to="/mint" 
-              className={`transition-colors ${location.pathname === '/mint' ? 'text-purple-500' : 'text-white hover:text-purple-500'}`}
-            >
-              Mint
-            </Link>
+           
             <Link 
               to="/my-nfts" 
               className={`transition-colors ${location.pathname === '/my-nfts' ? 'text-purple-500' : 'text-white hover:text-purple-500'}`}
             >
               My NFTs
             </Link>
-            <a 
-              href="#about" 
-              className="text-white hover:text-purple-500 transition-colors"
-            >
-              About
-            </a>
+           
           </nav>
         </div>
         <ConnectButton />
